@@ -1,5 +1,19 @@
-.venv/
-.runtime/
-.cache/
-model/
-runs/
+# Local runtime and benchmark output
+/.venv/
+/.runtime/
+/.cache/
+/model/
+/runs/
+
+# Python and local system files
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# Local configuration and downloads
+.env
+.env.*
+!.env.example
+*.log
+*.part
+*.safetensors
