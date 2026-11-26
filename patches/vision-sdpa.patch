@@ -1,0 +1,17 @@
+--- a/vllm/models/inkling2/nvidia/vision.py
++++ b/vllm/models/inkling2/nvidia/vision.py
+@@ -75,6 +75,14 @@
+         qkv = self.qkv_proj(hidden)
+         apply_rotary_qk_(qkv, metadata.meta, self.num_heads)
+         q, k, v = qkv.view(-1, 3, self.num_heads, self.head_dim).unbind(1)
++        if current_platform.is_device_capability_family(120):
++            from vllm.v1.attention.ops.vit_attn_wrappers import vit_torch_sdpa_wrapper
++
++            out = vit_torch_sdpa_wrapper(
++                q.unsqueeze(0), k.unsqueeze(0), v.unsqueeze(0),
++                scale=self.head_dim**-0.5, cu_seqlens=metadata.cu_seqlens,
++            )
++            return self.out_proj(out.reshape(hidden.shape))
+         kwargs = dict(
+             cu_seqlens_q=metadata.cu_seqlens,
+             cu_seqlens_k=metadata.cu_seqlens,

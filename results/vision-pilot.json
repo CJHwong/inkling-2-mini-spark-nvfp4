@@ -1,0 +1,754 @@
+{
+  "method": {
+    "prompt_settings": "Serial, temperature 0, top_p 1, low reasoning requested, 1024 output token cap",
+    "screen_score": "One normalized coordinate pair. Convert to screenshot pixels and test point in target box.",
+    "document_score": "Normalized character edit similarity on eight OCR crops. Count exact normalized matches in the comparison.",
+    "chart_score": "Normalized exact match, allowing numerically equivalent answers.",
+    "ollama": "0.40.17, installed inkling-2-mini:latest NVFP4 MLX, M5 Pro with 64 GiB, context 8192",
+    "q8": "sxuff overlay on native pinned vLLM with the experimental PyTorch vision attention path, DGX Spark",
+    "fast": "NVFP4 fast preset with the same experimental PyTorch vision attention path, same DGX Spark",
+    "spark_main": "262144 maximum sequence length, 4096 batched tokens. Engine cache rejected one screenshot.",
+    "spark_large_retry": "Only the rejected screenshot, with 5120 batched tokens. Report separately from main timing medians."
+  },
+  "datasets": {
+    "screenspot": "https://huggingface.co/datasets/lmms-lab/ScreenSpot-Pro",
+    "omnidoc": "https://github.com/opendatalab/OmniDocBench",
+    "charxiv": "https://huggingface.co/datasets/princeton-nlp/CharXiv"
+  },
+  "common_case_summary": {
+    "ollama": {
+      "screenspot": {
+        "cases": 7,
+        "correct_or_normalized_exact": 5,
+        "median_request_seconds": 11.355120917,
+        "median_time_to_first_token_seconds": 5.57452275
+      },
+      "omnidoc": {
+        "cases": 8,
+        "correct_or_normalized_exact": 8,
+        "median_request_seconds": 2.9923899584999987,
+        "median_time_to_first_token_seconds": 0.5145160419999968
+      },
+      "charxiv": {
+        "cases": 8,
+        "correct_or_normalized_exact": 8,
+        "median_request_seconds": 4.042114271000003,
+        "median_time_to_first_token_seconds": 1.3784596039999997
+      }
+    },
+    "q8": {
+      "screenspot": {
+        "cases": 7,
+        "correct_or_normalized_exact": 6,
+        "median_request_seconds": 8.657864498207346,
+        "median_time_to_first_token_seconds": 2.952630916144699
+      },
+      "omnidoc": {
+        "cases": 8,
+        "correct_or_normalized_exact": 8,
+        "median_request_seconds": 2.458772213431075,
+        "median_time_to_first_token_seconds": 0.6447937093907967
+      },
+      "charxiv": {
+        "cases": 8,
+        "correct_or_normalized_exact": 8,
+        "median_request_seconds": 4.112151912529953,
+        "median_time_to_first_token_seconds": 1.930518139502965
+      }
+    },
+    "fast": {
+      "screenspot": {
+        "cases": 7,
+        "correct_or_normalized_exact": 5,
+        "median_request_seconds": 4.951833372935653,
+        "median_time_to_first_token_seconds": 1.8387394240126014
+      },
+      "omnidoc": {
+        "cases": 8,
+        "correct_or_normalized_exact": 8,
+        "median_request_seconds": 1.6647477864753455,
+        "median_time_to_first_token_seconds": 0.25736615050118417
+      },
+      "charxiv": {
+        "cases": 8,
+        "correct_or_normalized_exact": 8,
+        "median_request_seconds": 2.6851857193978503,
+        "median_time_to_first_token_seconds": 1.0164796544704586
+      }
+    }
+  },
+  "main_requests": {
+    "ollama": [
+      {
+        "suite": "screenspot",
+        "id": "inventor_windows_43",
+        "score": 1.0,
+        "tokens": 292,
+        "first_s": 8.447315625,
+        "elapsed_s": 17.802468082999997,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "linux_common_linux_2",
+        "score": 1.0,
+        "tokens": 413,
+        "first_s": 11.819498916,
+        "elapsed_s": 23.798110291000004,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "premiere_windows_24",
+        "score": 1.0,
+        "tokens": 200,
+        "first_s": 5.540141959000003,
+        "elapsed_s": 11.355120917,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "stata_windows_28",
+        "score": 1.0,
+        "tokens": 204,
+        "first_s": 4.813665292000003,
+        "elapsed_s": 10.457172333000003,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "blender_windows_3",
+        "score": 0.0,
+        "tokens": 200,
+        "first_s": 5.57452275,
+        "elapsed_s": 11.004050082999996,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "powerpoint_windows_26",
+        "score": 1.0,
+        "tokens": 149,
+        "first_s": 7.761266250000006,
+        "elapsed_s": 11.469049084000005,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "eviews_windows_33",
+        "score": 1.0,
+        "tokens": 198,
+        "first_s": 4.501124458000007,
+        "elapsed_s": 9.833442542,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "vscode_macos_54",
+        "score": 0.0,
+        "tokens": 729,
+        "first_s": 6.478215457999994,
+        "elapsed_s": 28.218007416999995,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-01",
+        "score": 1.0,
+        "tokens": 114,
+        "first_s": 0.5658526659999978,
+        "elapsed_s": 3.181040082999999,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-02",
+        "score": 1.0,
+        "tokens": 160,
+        "first_s": 0.7636795420000055,
+        "elapsed_s": 4.026041458999998,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-03",
+        "score": 1.0,
+        "tokens": 96,
+        "first_s": 0.5109340420000024,
+        "elapsed_s": 2.624232707999994,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-04",
+        "score": 1.0,
+        "tokens": 98,
+        "first_s": 0.5180980419999912,
+        "elapsed_s": 2.803739833999998,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-05",
+        "score": 1.0,
+        "tokens": 80,
+        "first_s": 0.5019079589999933,
+        "elapsed_s": 2.43356591700001,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-06",
+        "score": 1.0,
+        "tokens": 163,
+        "first_s": 0.6536555419999956,
+        "elapsed_s": 4.736691334,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-07",
+        "score": 1.0,
+        "tokens": 76,
+        "first_s": 0.44984208299999295,
+        "elapsed_s": 2.1859923330000015,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-08",
+        "score": 1.0,
+        "tokens": 163,
+        "first_s": 0.4433426660000066,
+        "elapsed_s": 4.353541958000022,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0003",
+        "score": 1.0,
+        "tokens": 117,
+        "first_s": 1.6391327499999875,
+        "elapsed_s": 4.268504124999993,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0006",
+        "score": 1.0,
+        "tokens": 77,
+        "first_s": 0.9828673330000015,
+        "elapsed_s": 3.432141625000014,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0007",
+        "score": 1.0,
+        "tokens": 753,
+        "first_s": 1.7305619169999886,
+        "elapsed_s": 20.431486541999988,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0009",
+        "score": 1.0,
+        "tokens": 115,
+        "first_s": 1.4306737080000005,
+        "elapsed_s": 5.061886083000019,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0012",
+        "score": 1.0,
+        "tokens": 82,
+        "first_s": 1.5521068749999927,
+        "elapsed_s": 3.803830457999993,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0015",
+        "score": 1.0,
+        "tokens": 548,
+        "first_s": 1.3262454999999989,
+        "elapsed_s": 15.131859291000012,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0018",
+        "score": 1.0,
+        "tokens": 84,
+        "first_s": 1.091476666999995,
+        "elapsed_s": 3.0221113750000086,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0021",
+        "score": 1.0,
+        "tokens": 100,
+        "first_s": 0.9817672080000079,
+        "elapsed_s": 3.8157244170000126,
+        "finish": "stop"
+      }
+    ],
+    "q8": [
+      {
+        "suite": "screenspot",
+        "id": "inventor_windows_43",
+        "score": 1.0,
+        "tokens": 538,
+        "first_s": 8.288446214050055,
+        "elapsed_s": 18.996162849012762,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "linux_common_linux_2",
+        "error": "{'message': 'The decoder prompt contains a(n) image item with 4698 embedding tokens, which exceeds the pre-allocated encoder cache size 4096. Please reduce the input size or increase the encoder cache size by setting --limit-mm-per-prompt at startup.', 'type': 'BadRequestError', 'param': None, 'code': 400}",
+        "score": 0.0
+      },
+      {
+        "suite": "screenspot",
+        "id": "premiere_windows_24",
+        "score": 1.0,
+        "tokens": 551,
+        "first_s": 2.373127682134509,
+        "elapsed_s": 13.45045196916908,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "stata_windows_28",
+        "score": 1.0,
+        "tokens": 277,
+        "first_s": 3.6369197180029005,
+        "elapsed_s": 8.657864498207346,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "blender_windows_3",
+        "score": 0.0,
+        "tokens": 235,
+        "first_s": 3.1501621990464628,
+        "elapsed_s": 6.761754885083064,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "powerpoint_windows_26",
+        "score": 1.0,
+        "tokens": 132,
+        "first_s": 2.952630916144699,
+        "elapsed_s": 5.311595416162163,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "eviews_windows_33",
+        "score": 1.0,
+        "tokens": 106,
+        "first_s": 1.4848422908689827,
+        "elapsed_s": 2.8310908069834113,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "vscode_macos_54",
+        "score": 1.0,
+        "tokens": 937,
+        "first_s": 2.673997945152223,
+        "elapsed_s": 20.649833810981363,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-01",
+        "score": 1.0,
+        "tokens": 133,
+        "first_s": 0.9045888199470937,
+        "elapsed_s": 2.5492159908171743,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-02",
+        "score": 1.0,
+        "tokens": 191,
+        "first_s": 0.8548845739569515,
+        "elapsed_s": 2.869512965902686,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-03",
+        "score": 1.0,
+        "tokens": 97,
+        "first_s": 1.047410952160135,
+        "elapsed_s": 2.3698430960066617,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-04",
+        "score": 1.0,
+        "tokens": 160,
+        "first_s": 0.22260721679776907,
+        "elapsed_s": 2.5477013308554888,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-05",
+        "score": 1.0,
+        "tokens": 82,
+        "first_s": 0.43470284482464194,
+        "elapsed_s": 1.4208235978148878,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-06",
+        "score": 1.0,
+        "tokens": 107,
+        "first_s": 3.2417593270074576,
+        "elapsed_s": 4.679954851046205,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-07",
+        "score": 1.0,
+        "tokens": 77,
+        "first_s": 0.34463610989041626,
+        "elapsed_s": 1.5535380418878049,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-08",
+        "score": 1.0,
+        "tokens": 127,
+        "first_s": 0.2083083358593285,
+        "elapsed_s": 2.096496638841927,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0003",
+        "score": 1.0,
+        "tokens": 154,
+        "first_s": 3.00731222005561,
+        "elapsed_s": 5.361818902892992,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0006",
+        "score": 1.0,
+        "tokens": 61,
+        "first_s": 3.0370598670560867,
+        "elapsed_s": 4.110080962069333,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0007",
+        "score": 1.0,
+        "tokens": 667,
+        "first_s": 1.5339890751056373,
+        "elapsed_s": 10.16313436999917,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0009",
+        "score": 1.0,
+        "tokens": 105,
+        "first_s": 2.4805691421497613,
+        "elapsed_s": 4.010015466948971,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0012",
+        "score": 1.0,
+        "tokens": 82,
+        "first_s": 1.6613046480342746,
+        "elapsed_s": 2.6233626471366733,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0015",
+        "score": 1.0,
+        "tokens": 334,
+        "first_s": 1.4942263271659613,
+        "elapsed_s": 6.410761442966759,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0018",
+        "score": 1.0,
+        "tokens": 135,
+        "first_s": 1.5665311750490218,
+        "elapsed_s": 3.429657889995724,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0021",
+        "score": 1.0,
+        "tokens": 97,
+        "first_s": 2.1997316309716552,
+        "elapsed_s": 4.114222862990573,
+        "finish": "stop"
+      }
+    ],
+    "fast": [
+      {
+        "suite": "screenspot",
+        "id": "inventor_windows_43",
+        "score": 1.0,
+        "tokens": 624,
+        "first_s": 7.049013014184311,
+        "elapsed_s": 17.675830933032557,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "linux_common_linux_2",
+        "error": "{'message': 'The decoder prompt contains a(n) image item with 4698 embedding tokens, which exceeds the pre-allocated encoder cache size 4096. Please reduce the input size or increase the encoder cache size by setting --limit-mm-per-prompt at startup.', 'type': 'BadRequestError', 'param': None, 'code': 400}",
+        "score": 0.0
+      },
+      {
+        "suite": "screenspot",
+        "id": "premiere_windows_24",
+        "score": 1.0,
+        "tokens": 195,
+        "first_s": 1.4516984499059618,
+        "elapsed_s": 4.60355090489611,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "stata_windows_28",
+        "score": 1.0,
+        "tokens": 255,
+        "first_s": 2.4152585030533373,
+        "elapsed_s": 6.35060992394574,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "blender_windows_3",
+        "score": 0.0,
+        "tokens": 193,
+        "first_s": 1.8387394240126014,
+        "elapsed_s": 4.383882109075785,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "powerpoint_windows_26",
+        "score": 1.0,
+        "tokens": 172,
+        "first_s": 1.9532437431626022,
+        "elapsed_s": 4.376784763066098,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "eviews_windows_33",
+        "score": 1.0,
+        "tokens": 262,
+        "first_s": 1.353443200001493,
+        "elapsed_s": 4.951833372935653,
+        "finish": "stop"
+      },
+      {
+        "suite": "screenspot",
+        "id": "vscode_macos_54",
+        "score": 0.0,
+        "tokens": 1024,
+        "first_s": 1.6151359409559518,
+        "elapsed_s": 17.65461702295579,
+        "finish": "length"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-01",
+        "score": 1.0,
+        "tokens": 129,
+        "first_s": 0.4975984359625727,
+        "elapsed_s": 1.7222521889489144,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-02",
+        "score": 1.0,
+        "tokens": 145,
+        "first_s": 0.31884275702759624,
+        "elapsed_s": 1.6072433840017766,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-03",
+        "score": 1.0,
+        "tokens": 95,
+        "first_s": 0.37104330910369754,
+        "elapsed_s": 1.4007642229553312,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-04",
+        "score": 1.0,
+        "tokens": 112,
+        "first_s": 0.1958895439747721,
+        "elapsed_s": 1.5981427039951086,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-05",
+        "score": 1.0,
+        "tokens": 82,
+        "first_s": 0.19561637216247618,
+        "elapsed_s": 0.9128059991635382,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-06",
+        "score": 1.0,
+        "tokens": 136,
+        "first_s": 0.9927958170883358,
+        "elapsed_s": 2.719875368056819,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-07",
+        "score": 1.0,
+        "tokens": 163,
+        "first_s": 0.18377025006338954,
+        "elapsed_s": 2.5103969608899206,
+        "finish": "stop"
+      },
+      {
+        "suite": "omnidoc",
+        "id": "omnidoc-v1.6-08",
+        "score": 1.0,
+        "tokens": 248,
+        "first_s": 0.17653222498483956,
+        "elapsed_s": 3.1447979821823537,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0003",
+        "score": 1.0,
+        "tokens": 118,
+        "first_s": 1.7631055030506104,
+        "elapsed_s": 2.8214955660514534,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0006",
+        "score": 1.0,
+        "tokens": 73,
+        "first_s": 1.6454838158097118,
+        "elapsed_s": 2.6327713918872178,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0007",
+        "score": 1.0,
+        "tokens": 807,
+        "first_s": 0.7461291868239641,
+        "elapsed_s": 8.23714897595346,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0009",
+        "score": 1.0,
+        "tokens": 109,
+        "first_s": 1.137946859933436,
+        "elapsed_s": 2.737600046908483,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0012",
+        "score": 1.0,
+        "tokens": 94,
+        "first_s": 0.9426601640880108,
+        "elapsed_s": 1.936375193996355,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0015",
+        "score": 1.0,
+        "tokens": 642,
+        "first_s": 0.7142096168827266,
+        "elapsed_s": 7.748339092824608,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0018",
+        "score": 1.0,
+        "tokens": 138,
+        "first_s": 0.694693414028734,
+        "elapsed_s": 2.2450006378348917,
+        "finish": "stop"
+      },
+      {
+        "suite": "charxiv",
+        "id": "charxiv-val-0021",
+        "score": 1.0,
+        "tokens": 69,
+        "first_s": 1.0902991448529065,
+        "elapsed_s": 2.1529487299267203,
+        "finish": "stop"
+      }
+    ]
+  },
+  "large_screenshot_retry": {
+    "q8": [
+      {
+        "suite": "screenspot",
+        "id": "linux_common_linux_2",
+        "score": 1.0,
+        "tokens": 404,
+        "first_s": 6.258590052835643,
+        "elapsed_s": 13.52841352391988,
+        "finish": "stop"
+      }
+    ],
+    "fast": [
+      {
+        "suite": "screenspot",
+        "id": "linux_common_linux_2",
+        "score": 1.0,
+        "tokens": 247,
+        "first_s": 4.174398038070649,
+        "elapsed_s": 7.59113605809398,
+        "finish": "stop"
+      }
+    ]
+  }
+}

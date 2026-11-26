@@ -55,6 +55,11 @@ fi
 
 site=$(.venv/bin/python -c 'import sysconfig; print(sysconfig.get_path("purelib"))')
 cp -a --remove-destination "$recipe/overlay/vllm/." "$site/vllm/"
+if patch --directory "$site" --strip 1 --batch --forward --dry-run < patches/vision-sdpa.patch >/dev/null; then
+    patch --directory "$site" --strip 1 --batch --forward < patches/vision-sdpa.patch
+else
+    patch --directory "$site" --strip 1 --force --reverse --dry-run < patches/vision-sdpa.patch
+fi
 fast=$(mktemp -d "$PWD/.runtime/fast.XXXXXXXX")
 trap 'rm -rf -- "$fast"' EXIT
 cp -a "$site/vllm" "$fast/vllm"

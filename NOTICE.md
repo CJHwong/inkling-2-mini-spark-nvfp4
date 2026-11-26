@@ -11,6 +11,9 @@ script with the served model name set to `inkling`.
 expert path, and draft quantization in vLLM and sxuff's overlay.
 vLLM and sxuff's recipe use the Apache License 2.0.
 
+`patches/vision-sdpa.patch` adapts the Inkling image encoder to call
+vLLM's existing PyTorch attention wrapper on the Spark's GPU family.
+
 [vLLM source at the pinned commit](https://github.com/vllm-project/vllm/tree/ab18334a4f60da74db7de89fe95594e5ed0cda36)
 
 Setup downloads the Apache-2.0 Inkling 2 Mini checkpoint from Thinking
