@@ -29,6 +29,10 @@ unset PYTHONPATH INKLING2_TARGET_FP4 INKLING2_HEAD_FP4 INKLING2_EXPERT_FP4
 export INKLING2_DRAFT_QUANT=int8 INKLING2_DRAFT_QUANT_LAYERS=1
 cache=auto
 if [[ $preset == fast ]]; then
+    if [[ ! -f .runtime/fast/vllm/__init__.py ]]; then
+        echo 'Run ./setup.sh runtime to install the fast preset.' >&2
+        exit 1
+    fi
     export PYTHONPATH="$PWD/.runtime/fast"
     export INKLING2_TARGET_FP4=1 INKLING2_HEAD_FP4=1 INKLING2_EXPERT_FP4=1
     export INKLING2_DRAFT_QUANT=nvfp4-native

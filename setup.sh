@@ -54,7 +54,7 @@ if [[ ! -f /usr/include/python3.12/Python.h ]]; then
 fi
 
 site=$(.venv/bin/python -c 'import sysconfig; print(sysconfig.get_path("purelib"))')
-cp -a "$recipe/overlay/vllm/." "$site/vllm/"
+cp -a --remove-destination "$recipe/overlay/vllm/." "$site/vllm/"
 fast=$(mktemp -d "$PWD/.runtime/fast.XXXXXXXX")
 trap 'rm -rf -- "$fast"' EXIT
 cp -a "$site/vllm" "$fast/vllm"
