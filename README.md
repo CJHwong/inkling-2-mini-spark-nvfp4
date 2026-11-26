@@ -50,4 +50,22 @@ in order. It runs sxuff's canary, warmup, and nine serial requests.
 Each timed request generates 160 tokens with low reasoning effort.
 The reported decode rates exclude time to first token.
 
+### Fresh-clone results
+
+The test used one DGX Spark with Ubuntu 24.04.5, NVIDIA driver
+580.178.04, CUDA 13.0.88, and uv 0.13.8. The clone used a new Python
+environment, a verified download of the checkpoint, and separate
+empty build caches for each preset. Startup time ends when the
+server responds to `/health`.
+
+| Preset | Median decode (tokens/s) | Code | Prose | Math | Median time to first token | First startup |
+|---|---:|---:|---:|---:|---:|---:|
+| [`q8`](results/q8.json) | 67.23 | 73.80 | 45.87 | 67.23 | 163 ms | 206 s |
+| [`fast`](results/fast.json) | 85.93 | 90.16 | 52.09 | 85.93 | 171 ms | 325 s |
+
+Both presets passed the canary and completed all nine requests.
+`fast` decoded 27.8% faster at the median. The two presets matched
+0 of 9 output hashes. These requests use short text prompts and
+concurrency one.
+
 See [NOTICE.md](NOTICE.md) for attribution and the pinned sources.

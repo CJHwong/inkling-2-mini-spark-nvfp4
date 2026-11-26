@@ -1,0 +1,171 @@
+{
+ "protocol": "usage: python3 scripts/bench.py OUT.json [--port 8020] [--compare results/ab/stock.json] [--no-vision]",
+ "canary": {
+  "http": 200,
+  "answer": "408"
+ },
+ "rows": [
+  {
+   "ttft_s": 0.13719050819054246,
+   "decode_tps": 93.39348086018148,
+   "usage": {
+    "prompt_tokens": 53,
+    "total_tokens": 213,
+    "completion_tokens": 160,
+    "completion_tokens_details": {
+     "reasoning_tokens": 158
+    }
+   },
+   "finish": "length",
+   "text": "",
+   "output_sha256": "abb47e22b600122865fd163ce36ba3cebbc4009cbdb5e1fcb3e75f13fcd32a55",
+   "case": "code",
+   "repeat": 0
+  },
+  {
+   "ttft_s": 0.17298861197195947,
+   "decode_tps": 52.09278902478696,
+   "usage": {
+    "prompt_tokens": 54,
+    "total_tokens": 214,
+    "completion_tokens": 160,
+    "completion_tokens_details": {
+     "reasoning_tokens": 129
+    }
+   },
+   "finish": "length",
+   "text": "The rain came down sideways against the office windows, the kind of gray afternoon that made the whole building feel like it was listening",
+   "output_sha256": "d3cecda496aef4e9a67751c3b46e58f54d5526fe15468fd94b2b01e99f0c9515",
+   "case": "prose",
+   "repeat": 0
+  },
+  {
+   "ttft_s": 0.16557926801033318,
+   "decode_tps": 85.92623195696272,
+   "usage": {
+    "prompt_tokens": 44,
+    "total_tokens": 204,
+    "completion_tokens": 160,
+    "completion_tokens_details": {
+     "reasoning_tokens": 158
+    }
+   },
+   "finish": "length",
+   "text": "",
+   "output_sha256": "942f3e31050b41ba5e0c26656614e4c5e432f016488d70aae2bd1c349fc3b84f",
+   "case": "math",
+   "repeat": 0
+  },
+  {
+   "ttft_s": 0.1725934729911387,
+   "decode_tps": 90.15838778620781,
+   "usage": {
+    "prompt_tokens": 53,
+    "total_tokens": 213,
+    "completion_tokens": 160,
+    "completion_tokens_details": {
+     "reasoning_tokens": 158
+    }
+   },
+   "finish": "length",
+   "text": "",
+   "output_sha256": "6bd49f9d3c577294dfb060a1306160bd1ec45957754ccd799c7540e81ffaf064",
+   "case": "code",
+   "repeat": 1
+  },
+  {
+   "ttft_s": 0.17095029191114008,
+   "decode_tps": 52.095657571256524,
+   "usage": {
+    "prompt_tokens": 54,
+    "total_tokens": 214,
+    "completion_tokens": 160,
+    "completion_tokens_details": {
+     "reasoning_tokens": 129
+    }
+   },
+   "finish": "length",
+   "text": "The rain came down sideways against the office windows, the kind of gray afternoon that made the whole building feel like it was listening",
+   "output_sha256": "d3cecda496aef4e9a67751c3b46e58f54d5526fe15468fd94b2b01e99f0c9515",
+   "case": "prose",
+   "repeat": 1
+  },
+  {
+   "ttft_s": 0.1642974358983338,
+   "decode_tps": 85.93109737400815,
+   "usage": {
+    "prompt_tokens": 44,
+    "total_tokens": 204,
+    "completion_tokens": 160,
+    "completion_tokens_details": {
+     "reasoning_tokens": 158
+    }
+   },
+   "finish": "length",
+   "text": "",
+   "output_sha256": "942f3e31050b41ba5e0c26656614e4c5e432f016488d70aae2bd1c349fc3b84f",
+   "case": "math",
+   "repeat": 1
+  },
+  {
+   "ttft_s": 0.17221884801983833,
+   "decode_tps": 90.1190584494627,
+   "usage": {
+    "prompt_tokens": 53,
+    "total_tokens": 213,
+    "completion_tokens": 160,
+    "completion_tokens_details": {
+     "reasoning_tokens": 158
+    }
+   },
+   "finish": "length",
+   "text": "",
+   "output_sha256": "6bd49f9d3c577294dfb060a1306160bd1ec45957754ccd799c7540e81ffaf064",
+   "case": "code",
+   "repeat": 2
+  },
+  {
+   "ttft_s": 0.1713764111045748,
+   "decode_tps": 52.076195938969015,
+   "usage": {
+    "prompt_tokens": 54,
+    "total_tokens": 214,
+    "completion_tokens": 160,
+    "completion_tokens_details": {
+     "reasoning_tokens": 129
+    }
+   },
+   "finish": "length",
+   "text": "The rain came down sideways against the office windows, the kind of gray afternoon that made the whole building feel like it was listening",
+   "output_sha256": "d3cecda496aef4e9a67751c3b46e58f54d5526fe15468fd94b2b01e99f0c9515",
+   "case": "prose",
+   "repeat": 2
+  },
+  {
+   "ttft_s": 0.1645422140136361,
+   "decode_tps": 85.9381045348266,
+   "usage": {
+    "prompt_tokens": 44,
+    "total_tokens": 204,
+    "completion_tokens": 160,
+    "completion_tokens_details": {
+     "reasoning_tokens": 158
+    }
+   },
+   "finish": "length",
+   "text": "",
+   "output_sha256": "942f3e31050b41ba5e0c26656614e4c5e432f016488d70aae2bd1c349fc3b84f",
+   "case": "math",
+   "repeat": 2
+  }
+ ],
+ "median_decode_tps": 85.93109737400815,
+ "median_ttft_s": 0.17095029191114008,
+ "case_medians": {
+  "code": 90.15838778620781,
+  "prose": 52.09278902478696,
+  "math": 85.93109737400815
+ },
+ "mean_acceptance_length": 2.909819639278557,
+ "matched_hashes": 0
+}
