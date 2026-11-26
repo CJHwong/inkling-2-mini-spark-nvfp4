@@ -25,6 +25,7 @@ for preset in q8 fast; do
         echo 'Port 8020 is already in use.' >&2
         exit 1
     fi
+    started=$SECONDS
     ./serve.sh "$preset" > "$run/$preset.log" 2>&1 &
     pid=$!
     for ((attempt=0; attempt<600; attempt++)); do
@@ -41,6 +42,7 @@ for preset in q8 fast; do
         echo "Startup timed out. Read $run/$preset.log." >&2
         exit 1
     fi
+    printf "%s ready in %s seconds\n" "$preset" "$((SECONDS - started))" | tee -a "$run/startup.txt"
     options=()
     if [[ $preset == fast ]]; then
         options=(--compare "$run/q8.json")

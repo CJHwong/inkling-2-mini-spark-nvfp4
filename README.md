@@ -29,7 +29,9 @@ From the clone, run:
 
 Setup verifies the checkpoint file sizes and SHA-256 hashes for large
 files. If system Python headers are missing, setup extracts the
-matching Ubuntu header package inside the clone.
+matching Ubuntu header package inside the clone. The pinned NVIDIA
+cuSPARSELt wheel reports an SBSA platform tag. Setup checks that the
+shared library loads when `uv pip check` reports that single issue.
 
 To change presets, stop the server and run `./serve.sh q8`. Pi can use
 either preset with the same OpenAI-compatible endpoint and model name.

@@ -63,4 +63,22 @@ patch --directory "$fast" --strip 1 --batch < patches/fast.patch
 rm -rf -- .runtime/fast
 mv -T "$fast" .runtime/fast
 trap - EXIT
-uv pip check --python .venv/bin/python
+# NVIDIA labels the ARM64 cuSPARSELt wheel as SBSA in its internal metadata.
+if ! report=$(NO_COLOR=1 uv pip check --python .venv/bin/python 2>&1); then
+    printf '%s\n' "$report" >&2
+    if ! grep -Fxq 'Found 1 incompatibility' <<< "$report" ||
+        ! grep -Fxq 'The package `nvidia-cusparselt-cu13` was built for a different platform' <<< "$report"; then
+        exit 1
+    fi
+    .venv/bin/python - <<'PYTHON'
+from ctypes import CDLL
+from pathlib import Path
+from sysconfig import get_path
+
+library = Path(get_path("purelib")) / "nvidia/cusparselt/lib/libcusparseLt.so.0"
+CDLL(str(library))
+print("The ARM64 cuSPARSELt library loads.")
+PYTHON
+else
+    printf '%s\n' "$report"
+fi
