@@ -67,7 +67,7 @@ trap - EXIT
 if ! report=$(NO_COLOR=1 uv pip check --python .venv/bin/python 2>&1); then
     printf '%s\n' "$report" >&2
     if ! grep -Fxq 'Found 1 incompatibility' <<< "$report" ||
-        ! grep -Fxq 'The package `nvidia-cusparselt-cu13` was built for a different platform' <<< "$report"; then
+        ! grep -Fxq "The package \`nvidia-cusparselt-cu13\` was built for a different platform" <<< "$report"; then
         exit 1
     fi
     .venv/bin/python - <<'PYTHON'
