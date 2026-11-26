@@ -1,0 +1,183 @@
+--- a/vllm/models/inkling2/nvidia/attention.py
++++ b/vllm/models/inkling2/nvidia/attention.py
+@@ -308,6 +308,38 @@
+ 
+     def process_weights_after_loading(self) -> None:
+         self.rel_proj_shifted = shift_rel_proj(self.rel_logits_proj, self.is_local)
++        import os
++        self.experimental_fp4 = os.getenv("INKLING2_TARGET_FP4") == "1"
++        if not self.experimental_fp4:
++            return
++        from .ops.gemv_q8 import quantize_rows
++        q_side = sum(self.split_sizes[:4])
++        kv_size = self.split_sizes[4]
++        weight = self.qkvr.weight
++        matrices = {
++            "all": weight,
++            "q": weight[:sum(self.q_side_splits)],
++            "k": weight[q_side:q_side + kv_size],
++            "v": weight[q_side + kv_size:q_side + 2 * kv_size],
++            "out": self.wo_ud.weight,
++        }
++        self.fp4_weights = {}
++        for name, matrix in matrices.items():
++            rows = matrix.shape[0]
++            padding = (-rows) % 64
++            padded = torch.nn.functional.pad(matrix, (0, 0, 0, padding)) if padding else matrix
++            self.fp4_weights[name] = (quantize_rows(padded, "nvfp4-native"), rows)
++
++    def _experimental_linear(self, name, x, weight, out=None):
++        if not self.experimental_fp4:
++            return linear(x, weight, out)
++        from .ops.gemv_q8 import gemv_q8
++        (packed, scales), rows = self.fp4_weights[name]
++        result = gemv_q8(x, packed, scales)[..., :rows]
++        if out is not None:
++            out.copy_(result)
++            return out
++        return result.contiguous()
+ 
+     def get_attn_backend(self) -> type[AttentionBackend]:
+         return Inkling2AttentionBackend
+@@ -334,14 +366,14 @@
+         # forward), so the LoRA deltas are added here (no-op without LoRA).
+         weight = self.qkvr.weight
+         if x_k is x_q and x_v is x_q:
+-            projected = linear(x_q, weight)
++            projected = self._experimental_linear("all", x_q, weight)
+             add_linear_lora(self.qkvr, projected, x_q, range(6))
+             return list(projected.split(self.split_sizes, dim=-1)[:6])
+         q_side, kv_size = sum(self.split_sizes[:4]), self.split_sizes[4]
+         k_end = q_side + kv_size
+-        projected = linear(x_q, weight[: sum(self.q_side_splits)])
+-        k = linear(x_k, weight[q_side:k_end])
+-        v = linear(x_v, weight[k_end : k_end + kv_size])
++        projected = self._experimental_linear("q", x_q, weight[: sum(self.q_side_splits)])
++        k = self._experimental_linear("k", x_k, weight[q_side:k_end])
++        v = self._experimental_linear("v", x_v, weight[k_end : k_end + kv_size])
+         add_linear_lora(self.qkvr, projected, x_q, range(4))
+         add_linear_lora(self.qkvr, k, x_k, [4])
+         add_linear_lora(self.qkvr, v, x_v, [5])
+@@ -395,7 +427,7 @@
+             output,
+             pass_idx,
+         )
+-        out = linear(output, self.wo_ud.weight, out)
++        out = self._experimental_linear("out", output, self.wo_ud.weight, out)
+         add_linear_lora(self.wo_ud, out, output)
+         return out
+ 
+--- a/vllm/models/inkling2/nvidia/model.py
++++ b/vllm/models/inkling2/nvidia/model.py
+@@ -82,6 +82,11 @@
+     """Use the low-M projection while preserving vocab gathering and softcaps."""
+ 
+     def _apply_head(self, lm_head, hidden_states, embedding_bias):
++        if hasattr(self, "experimental_fp4_head"):
++            from .ops.gemv_q8 import gemv_q8
++            packed, scales = self.experimental_fp4_head
++            output = gemv_q8(hidden_states, packed, scales, embedding_bias, torch.bfloat16)
++            return output.float() if self.head_dtype == torch.float32 else output
+         from vllm.model_executor.layers.linear import UnquantizedLinearMethod
+         from vllm.model_executor.layers.vocab_parallel_embedding import (
+             UnquantizedEmbeddingMethod,
+@@ -813,6 +818,10 @@
+             loaded |= {f"visual.{n}" for n in self.visual.load_weights(visual_weights)}
+         if missing := params.keys() - loaded:
+             raise ValueError(f"Missing checkpoint tensors: {sorted(missing)}")
++        import os
++        if os.getenv("INKLING2_HEAD_FP4") == "1":
++            from .ops.gemv_q8 import quantize_rows
++            self.logits_processor.experimental_fp4_head = quantize_rows(self.lm_head.weight, "nvfp4-native")
+         return loaded
+ 
+ 
+--- a/vllm/models/inkling2/nvidia/moe.py
++++ b/vllm/models/inkling2/nvidia/moe.py
+@@ -201,7 +201,37 @@
+         )
+         param.data.copy_(loaded)
+ 
++    @torch.no_grad()
++    def _experimental_convert_experts(self):
++        from flashinfer import nvfp4_quantize, SfLayout
++        converted = {}
++        for name in ("w13", "w2"):
++            weight = getattr(self, f"{name}_weight")
++            scales = getattr(self, f"{name}_weight_scale")
++            packed_weights, block_scales, outer_scales = [], [], []
++            for expert in range(self.num_experts):
++                exponent = scales[expert].float() - 127.0
++                multiplier = torch.exp2(exponent).repeat_interleave(32, dim=-1)
++                matrix = (weight[expert].float() * multiplier).to(torch.bfloat16)
++                global_scale = (2688.0 / matrix.float().abs().amax().clamp_min(1e-12)).reshape(1)
++                packed, blocks = nvfp4_quantize(matrix, global_scale, sfLayout=SfLayout.layout_linear, do_shuffle=False)
++                packed_weights.append(packed)
++                block_scales.append(blocks.view(torch.float8_e4m3fn))
++                outer_scales.append(global_scale.reciprocal().reshape(()))
++            converted[name] = (torch.stack(packed_weights), torch.stack(block_scales), torch.stack(outer_scales))
++        self.nvfp4 = True
++        self.humming_nvfp4 = True
++        for name in ("w13", "w2"):
++            packed, blocks, outer = converted[name]
++            getattr(self, f"{name}_weight").data = packed
++            getattr(self, f"{name}_weight_scale").data = blocks
++            self.register_buffer(f"{name}_weight_amax", outer, persistent=False)
++            self.register_buffer(f"{name}_weight_outer_scale_denominator", torch.ones(1, device=outer.device, dtype=torch.float32), persistent=False)
++
+     def process_weights_after_loading(self) -> None:
++        import os
++        if os.getenv("INKLING2_EXPERT_FP4") == "1" and not self.nvfp4 and self.sm120:
++            self._experimental_convert_experts()
+         if self.sm100 or (self.sm120 and not self.humming_nvfp4):
+             return
+         weights = {}
+--- a/vllm/models/inkling2/nvidia/ops/gemv_q8.py
++++ b/vllm/models/inkling2/nvidia/ops/gemv_q8.py
+@@ -152,3 +152,46 @@
+             num_stages=stages,
+         )
+     return out.view(*lead, n)
++
++# Native NVFP4 W4A4 draft experiment. Target and cache are unchanged.
++_native_original_mode = draft_quant_mode
++_native_original_quantize = quantize_rows
++_native_original_gemv = gemv_q8
++
++def draft_quant_mode():
++    if os.environ.get("INKLING2_DRAFT_QUANT", "").lower() == "nvfp4-native":
++        return "nvfp4-native"
++    return _native_original_mode()
++
++@torch.no_grad()
++def quantize_rows(weight, mode, out=None, chunk=8192):
++    if mode != "nvfp4-native":
++        return _native_original_quantize(weight, mode, out, chunk)
++    from flashinfer import nvfp4_quantize, SfLayout
++    if weight.shape[1] % 64 or weight.shape[0] % 64:
++        raise ValueError(f"native NVFP4 shape unsupported: {tuple(weight.shape)}")
++    global_scale = (2688.0 / weight.float().abs().amax().clamp_min(1e-12)).reshape(1)
++    packed, blocks = nvfp4_quantize(weight.contiguous(), global_scale, sfLayout=SfLayout.layout_128x4, do_shuffle=False)
++    if out is None:
++        return packed, (blocks, global_scale)
++    out[0].copy_(packed)
++    out[1][0].copy_(blocks)
++    out[1][1].copy_(global_scale)
++    return out
++
++def gemv_q8(x, q, scale, bias=None, out_dtype=None):
++    if not isinstance(scale, tuple):
++        return _native_original_gemv(x, q, scale, bias, out_dtype)
++    from flashinfer import nvfp4_quantize, SfLayout
++    from flashinfer.gemm import mm_fp4
++    blocks, weight_global = scale
++    leading = x.shape[:-1]
++    x2 = x.reshape(-1, x.shape[-1]).contiguous()
++    activation_global = (2688.0 / x2.float().abs().amax().clamp_min(1e-12)).reshape(1)
++    packed_x, scale_x = nvfp4_quantize(x2, activation_global, sfLayout=SfLayout.layout_128x4, do_shuffle=False)
++    answer = mm_fp4(packed_x, q.T, scale_x, blocks.T,
++                    1.0 / (activation_global * weight_global), out_dtype or x.dtype,
++                    backend="cute-dsl")
++    if bias is not None:
++        answer = answer + bias
++    return answer.view(*leading, q.shape[0])
